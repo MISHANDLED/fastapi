@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from datetime import datetime
+from pydantic.networks import EmailStr
 
 class PostBase(BaseModel):
     title: str
@@ -10,6 +11,19 @@ class Post(PostBase):
     pass
 
 class ResponseModel(PostBase):
+    id: int
+    created_at: datetime
+
+    class Config:
+        orm_mode = True
+
+
+class UserBase(BaseModel):
+    username: str
+    email: EmailStr
+    password: str
+
+class UserResponseModel(UserBase):
     id: int
     created_at: datetime
 

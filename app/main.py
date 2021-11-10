@@ -1,4 +1,5 @@
 from re import I
+from passlib.utils.decor import deprecated_function
 import psycopg2
 from psycopg2.extras import RealDictCursor
 from typing import Optional, List
@@ -6,9 +7,12 @@ from fastapi import FastAPI, Response, status, Depends
 from fastapi.exceptions import HTTPException
 from pydantic import BaseModel
 from sqlalchemy.orm import session
-from . import models, schemas
+from sqlalchemy.sql.functions import user
+from . import models, schemas, passwordhash
 from .database import engine, get_db
 from sqlalchemy.orm import Session
+
+
 models.Base.metadata.create_all(bind=engine)
 
 
@@ -22,6 +26,8 @@ def message():
     return {"Message":"Hello World!",
             "Made By":"Devansh Mohata"}
 
+
+# -------------------- Posts --------------------
 
 # Get All Posts
 @app.get("/posts", response_model=List[schemas.ResponseModel])
@@ -82,3 +88,29 @@ def update_post(id:int, post: schemas.Post, db: Session = Depends(get_db)):
     db.commit()
     return post_query.first()
 
+
+
+# -------------------- Users -------------------- 
+
+# Create A User 
+@app.post("/users", response_model=schemas.UserResponseModel)
+def create_user(user: schemas.UserBase, db: Session = Depends(get_db)):
+    
+    new_user = models.User(username = user.username, email = user.email, password = passwordhash.hashpass(user.password))
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+
+    return new_user
+
+
+# Get User Info using Username
+@app.get("/users/{username}", response_model=schemas.UserResponseModel)
+def get_post_by_id(username:str, db: Session = Depends(get_db)):
+
+    user_data = db.query(models.User).filter(models.User.username == username).first()
+
+    if not user_data:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail= f"Post with username {username} not found")
+
+    return user_data
