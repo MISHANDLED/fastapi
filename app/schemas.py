@@ -33,9 +33,12 @@ class UserResponseModel(UserBase):
     class Config:
         orm_mode = True
 
-class LoginBase(BaseModel):
-    email: EmailStr
-    password = str
+class TokenBase(BaseModel):
+    access_token: str
+    token_type: str
+
+class TokenData(BaseModel):
+    id: str
 
 
     

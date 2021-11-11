@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from .. import models, schemas
 from ..database import get_db
 from typing import List
+from .. import oauth
 
 router = APIRouter(
     prefix="/posts",
@@ -31,8 +32,9 @@ def get_post_by_id(id:int, db: Session = Depends(get_db)):
 
 # Create A New Post
 @router.post("/", response_model=schemas.ResponseModel)
-def create_post(post: schemas.Post, db: Session = Depends(get_db)):
+def create_post(post: schemas.Post, db: Session = Depends(get_db), user_id: int = Depends(oauth.get_curr_user)):
     
+    print(user_id)
     new_post = models.Post(title=post.title, content=post.content, published=post.published)
     db.add(new_post)
     db.commit()
@@ -43,7 +45,7 @@ def create_post(post: schemas.Post, db: Session = Depends(get_db)):
 
 # Delete a Post by id
 @router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_post(id: int, db: Session = Depends(get_db)):
+def delete_post(id: int, db: Session = Depends(get_db), user_id: int = Depends(oauth.get_curr_user)):
 
     post_del = db.query(models.Post).filter(models.Post.id == id)
 
@@ -57,7 +59,7 @@ def delete_post(id: int, db: Session = Depends(get_db)):
 
 # Update A Post 
 @router.put("/{id}", response_model=schemas.ResponseModel)
-def update_post(id:int, post: schemas.Post, db: Session = Depends(get_db)):
+def update_post(id:int, post: schemas.Post, db: Session = Depends(get_db), user_id: int = Depends(oauth.get_curr_user)):
 
     post_query = db.query(models.Post).filter(models.Post.id == id)
     
