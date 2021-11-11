@@ -13,6 +13,7 @@ from .database import engine, get_db
 from sqlalchemy.orm import Session
 from .routes_to import users as u
 from .routes_to import posts as p
+from .routes_to import auth 
 
 
 models.Base.metadata.create_all(bind=engine)
@@ -21,6 +22,7 @@ app = FastAPI()
 
 app.include_router(p.router)
 app.include_router(u.router)
+app.include_router(auth.router)
 
 
 # Entry Page

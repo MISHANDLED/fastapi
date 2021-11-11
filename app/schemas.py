@@ -1,6 +1,9 @@
 from pydantic import BaseModel
 from datetime import datetime
 from pydantic.networks import EmailStr
+from sqlalchemy.sql.sqltypes import String
+
+from app.database import Base
 
 class PostBase(BaseModel):
     title: str
@@ -29,3 +32,10 @@ class UserResponseModel(UserBase):
 
     class Config:
         orm_mode = True
+
+class LoginBase(BaseModel):
+    email: EmailStr
+    password = str
+
+
+    
