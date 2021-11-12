@@ -12,11 +12,16 @@ router = APIRouter(
 )
 
 # Get All Posts
-@router.get("/", response_model=List[schemas.ResponseModel])
-def get_posts(db: Session = Depends(get_db)):
+@router.get("/")
+def get_posts(db: Session = Depends(get_db), response_model=schemas.ResponseModel):
+
+    a = db.query(models.Post, models.User).filter(models.Post.user_id == models.User.id).all()   
     
-    # print(user_details)
     all_posts = db.query(models.Post).all()
+    
+    # Need to Work in it, a contains list of dicts - dicts has two keys Posts and Users    
+    # Need to Develop Response Model Accordingly 
+    
     return all_posts
 
 
