@@ -1,6 +1,8 @@
 from typing import ContextManager
+from sqlalchemy.orm import relationship
 from sqlalchemy.sql.expression import text, true
 from sqlalchemy.sql.functions import now
+from sqlalchemy.sql.schema import ForeignKey
 from sqlalchemy.sql.sqltypes import TIMESTAMP
 from .database import Base
 from sqlalchemy import Column, Integer, String, Boolean
@@ -13,6 +15,8 @@ class Post(Base):
     content = Column(String, nullable = False)
     published = Column(Boolean, server_default = 'True', nullable = False)
     created_at = Column(TIMESTAMP(timezone=true), nullable = False, server_default = text('now()'))  
+    user_id = Column(Integer, ForeignKey("usersdata.id", ondelete="CASCADE"), nullable=False)
+    user_details = relationship("User")
 
 class User(Base):
     __tablename__ = "usersdata"

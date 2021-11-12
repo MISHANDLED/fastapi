@@ -1,6 +1,8 @@
 from jose import JWTError, jwt
 from datetime import datetime, timedelta
-from . import schemas
+
+from sqlalchemy.orm.session import Session
+from . import schemas, database, models
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 
@@ -31,16 +33,22 @@ def verify_access_token(token: str, exception_details):
             raise exception_details
 
         token_data = schemas.TokenData(id=id)
+        
 
     except JWTError:
         raise exception_details
+    
+    return token_data
 
-def get_curr_user(token: str = Depends(scheme_oauth)):
+def get_curr_user(token: str = Depends(scheme_oauth), db: Session = Depends(database.get_db)):
     exception_details = HTTPException(
                                         status_code=status.HTTP_401_UNAUTHORIZED, 
                                         detail="Invalid credentials", 
                                         headers={"WWW-Authenticate":"Bearer"}
                                     )
 
-    return verify_access_token(token,exception_details)
+    token = verify_access_token(token,exception_details)
+    user_details = db.query(models.User).filter(models.User.id == token.id).first()
+
+    return user_details
 
