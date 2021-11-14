@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Response, status, HTTPException, Depends, APIRouter
 from sqlalchemy.orm import Session
-from sqlalchemy.sql.functions import user
+from sqlalchemy.sql.functions import mode, user
 from .. import models, schemas
 from ..database import get_db
 from typing import List
@@ -12,24 +12,24 @@ router = APIRouter(
 )
 
 # Get All Posts
-@router.get("/")
-def get_posts(db: Session = Depends(get_db), response_model=schemas.ResponseModel):
+@router.get("/", response_model=schemas.Response_All)
+def get_posts(db: Session = Depends(get_db)):
 
-    a = db.query(models.Post, models.User).filter(models.Post.user_id == models.User.id).all()   
+    all_posts = db.query(models.Post, models.User).filter(models.Post.user_id == models.User.id).with_entities(
+        models.User.username, models.Post.id, models.Post.title, models.Post.content, models.Post.created_at
+        ).all() 
     
-    all_posts = db.query(models.Post).all()
-    
-    # Need to Work in it, a contains list of dicts - dicts has two keys Posts and Users    
-    # Need to Develop Response Model Accordingly 
     
     return all_posts
 
 
 # Get A Single Post by id
-@router.get("/{id}", response_model=schemas.ResponseModel)
+@router.get("/{id}", response_model=schemas.ResponseNew)
 def get_post_by_id(id:int, db: Session = Depends(get_db)):
 
-    single_post = db.query(models.Post).filter(models.Post.id == id).first()
+    single_post = db.query(models.Post, models.User).filter(models.Post.user_id == models.User.id).with_entities(
+        models.User.username, models.Post.id, models.Post.title, models.Post.content, models.Post.created_at
+        ).first()
 
     if not single_post:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail= f"Post with id {id} not found")
