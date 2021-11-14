@@ -1,9 +1,7 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 from datetime import datetime
 from pydantic.networks import EmailStr
-from sqlalchemy.sql.sqltypes import String
 from typing import List
-from app.database import Base
 
 class UserBase(BaseModel):
     username: str

@@ -1,16 +1,6 @@
-from re import I
-from passlib.utils.decor import deprecated_function
-import psycopg2
-from psycopg2.extras import RealDictCursor
-from typing import Optional, List
-from fastapi import FastAPI, Response, status, Depends
-from fastapi.exceptions import HTTPException
-from pydantic import BaseModel
-from sqlalchemy.orm import session
-from sqlalchemy.sql.functions import user
-from . import models, schemas, passwordhash
-from .database import engine, get_db
-from sqlalchemy.orm import Session
+from fastapi import FastAPI
+from . import models
+from .database import engine
 from .routes_to import users as u
 from .routes_to import posts as p
 from .routes_to import auth 
