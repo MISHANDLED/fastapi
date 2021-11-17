@@ -1,7 +1,8 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from datetime import datetime
 from pydantic.networks import EmailStr
 from typing import List
+
 
 class UserBase(BaseModel):
     username: str
@@ -60,3 +61,8 @@ class ResponseNew(BaseModel):
 
 class Response_All(BaseModel):
     __root__: List[ResponseNew]
+
+
+class Votes(BaseModel):
+    post_id: int
+    dir: int = Field(..., gt=-1, le=1)
