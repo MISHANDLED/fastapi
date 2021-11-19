@@ -28,6 +28,7 @@ Route  | Method | Purpose
 /users  | POST | Create a User
 /users/{id}  | GET | Get a particular user details using User ID
 /users/{username} | GET | Get a particular user details using username
+/login | POST | Login a valid User
 
 
 ### Votes
