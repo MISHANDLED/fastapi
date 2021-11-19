@@ -10,12 +10,12 @@ from sqlalchemy import or_
 
 router = APIRouter(
     prefix="/login",
-    tags=["Authentication"]
+    tags=["USERS"]
 )
 
 #Login 
 @router.post("/", response_model=schemas.TokenBase)
-def get_posts(user_cred: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+def login_user(user_cred: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     
     info = db.query(models.User).filter(models.User.email == user_cred.username).first()
 

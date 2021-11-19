@@ -22,7 +22,7 @@ def create_user(user: schemas.UserBase, db: Session = Depends(get_db)):
 
 # Get User Info using Username
 @router.get("/{username}", response_model=schemas.UserResponseModel)
-def get_post_by_id(username:str, db: Session = Depends(get_db)):
+def get_user_by_username(username:str, db: Session = Depends(get_db)):
 
     user_data = db.query(models.User).filter(models.User.username == username).first()
 
@@ -34,7 +34,7 @@ def get_post_by_id(username:str, db: Session = Depends(get_db)):
 
 # Get User Info using ID
 @router.get("/{id}", response_model=schemas.UserResponseModel)
-def get_post_by_id(id:int, db: Session = Depends(get_db)):
+def get_user_by_id(id:int, db: Session = Depends(get_db)):
 
     user_data = db.query(models.User).filter(models.User.id == id).first()
 
