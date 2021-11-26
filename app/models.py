@@ -13,6 +13,7 @@ class Post(Base):
     published = Column(Boolean, server_default = 'True', nullable = False)
     created_at = Column(TIMESTAMP(timezone=true), nullable = False, server_default = text('now()'))  
     user_id = Column(Integer, ForeignKey("usersdata.id", ondelete="CASCADE"), nullable=False)
+    votes_count = Column(Integer,nullable = False, default=0)
 
 
 class User(Base):

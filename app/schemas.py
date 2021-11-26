@@ -55,12 +55,10 @@ class ResponseNew(BaseModel):
     title: str
     content: str 
     created_at: datetime
+    votes_count: int
 
     class Config:
         orm_mode = True
-
-class Response_All(BaseModel):
-    __root__: List[ResponseNew]
 
 
 class Votes(BaseModel):

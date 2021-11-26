@@ -35,6 +35,8 @@ def vote(votes: schemas.Votes, db: Session = Depends(get_db), current_user: int 
             raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail = f"User {current_user.username} has already voted")
 
         new_vote = models.Vote(user_id = current_user.id, post_id = votes.post_id)
+        post_query.votes_count = post_query.votes_count + 1 
+        
         db.add(new_vote)
         db.commit()
 
@@ -44,7 +46,9 @@ def vote(votes: schemas.Votes, db: Session = Depends(get_db), current_user: int 
         if not found_vote:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = f"Vote does not exist")
 
+        post_query.votes_count = post_query.votes_count - 1
         vote_query.delete(synchronize_session=False)
+        
         db.commit()
 
         return{"Message":"Successful Un-Voting"}
